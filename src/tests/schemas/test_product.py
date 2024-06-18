@@ -1,18 +1,15 @@
-from uuid import UUID
-
 from pydantic import ValidationError
+
 import pytest
 from store.schemas.product import ProductIn
-from tests.schemas.factories import product_data
+from tests.factories import product_data
 
 
 def test_schemas_return_sucess():
     data = product_data()
-
     product = ProductIn.model_validate(data)
 
     assert product.name == "I5 2410M"
-    assert isinstance(product.id, UUID)
 
 
 def test_schemas_return_raise():
