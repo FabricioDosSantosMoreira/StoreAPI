@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "storeapi"
+version = "0.1.0"
+description = ""
+authors = ["Fabrício Dos Santos Moreira <None>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.0"
+pydantic = "^2.7.4"
+pydantic-settings = "^2.3.3"
+motor = "^3.4.0"
+pytest = "^8.2.2"
+pytest-asyncio = "^0.23.7"
+pre-commit = "^3.7.1"
+uvicorn = "^0.30.1"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = [
+  "--strict-config",
+  "--strict-markers",
+  "--ignore=docs_src",
+]
+xfail_strict = true
+junit_family = "xunit2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
