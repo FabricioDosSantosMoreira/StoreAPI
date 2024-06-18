@@ -26,6 +26,7 @@ addopts = [
 ]
 xfail_strict = true
 junit_family = "xunit2"
+testpaths = "./tests"
 
 [build-system]
 requires = ["poetry-core"]
