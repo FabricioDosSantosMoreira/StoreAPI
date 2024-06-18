@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import List
 from uuid import UUID
 
@@ -41,7 +40,7 @@ async def test_usecases_query_should_return_sucess():
 
 
 async def test_usecases_update_should_return_sucess(product_up, product_inserted):
-    product_up.price = Decimal("809.9")
+    product_up.price = "809.9"
     result = await product_usecase.update(id=product_inserted.id, body=product_up)
     assert isinstance(result, ProductUpdateOut)
 
@@ -52,7 +51,7 @@ async def test_usecases_delete_should_return_sucess(product_inserted):
     assert result is True
 
 
-async def test_usecases_get_should_return_not_found():
+async def test_usecases_delete_should_return_not_found():
     with pytest.raises(NotFoundException) as err:
         await product_usecase.delete(id=UUID("c711f373-c9cf-4b69-9249-9c755f208d6c"))
 

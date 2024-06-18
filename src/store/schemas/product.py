@@ -28,12 +28,14 @@ class ProductOut(ProductBase, BaseSchemaMixin, OutMixin):
 
 
 class ProductUpdateIn(ProductBase):
+    name: Optional[str] = Field(None, description="Product name")
     quantity: Optional[int] = Field(None, description="Product quantity")
     price: Optional[Decimal_] = Field(None, description="Product price")
     status: Optional[bool] = Field(None, description="Product status")
 
 
 class ProductUpdateOut(ProductBase, BaseSchemaMixin, OutMixin):
+    name: Optional[str] = Field(None, description="Product name")
     quantity: Optional[int] = Field(None, description="Product quantity")
     price: Optional[Decimal] = Field(None, description="Product price")
     status: Optional[bool] = Field(None, description="Product status")

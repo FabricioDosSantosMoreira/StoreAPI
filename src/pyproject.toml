@@ -32,6 +32,3 @@ testpaths = "./tests"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.ruff]
-ignore = ["F811"]
