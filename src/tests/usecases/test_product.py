@@ -15,7 +15,7 @@ async def test_usecases_create_should_return_sucess(product_in):
 
 
 async def test_usecases_get_should_return_sucess(product_inserted):
-    result = await product_usecase.get(id=product_inserted.id)
+    result = await product_usecase.get_by_id(id=product_inserted.id)
 
     assert isinstance(result, ProductOut)
     assert result.name == "I5 2410M"
@@ -23,7 +23,7 @@ async def test_usecases_get_should_return_sucess(product_inserted):
 
 async def test_usecases_get_should_return_not_found():
     with pytest.raises(NotFoundException) as err:
-        await product_usecase.get(id=UUID("c711f373-c9cf-4b69-9249-9c755f208d6c"))
+        await product_usecase.get_by_id(id=UUID("c711f373-c9cf-4b69-9249-9c755f208d6c"))
 
     assert (
         err.value.message
@@ -33,7 +33,7 @@ async def test_usecases_get_should_return_not_found():
 
 @pytest.mark.usefixtures("products_inserted")
 async def test_usecases_query_should_return_sucess():
-    result = await product_usecase.query()
+    result = await product_usecase.get_all()
 
     assert isinstance(result, List)
     assert len(result) > 1
