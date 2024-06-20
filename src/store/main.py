@@ -1,16 +1,14 @@
 from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import RedirectResponse
-
 from store.core.config import settings
 from store.routers import api_router
 
 
-# Middleware para redirecionar para /docs
+# Middleware to /docs
 class RedirectToDocsMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
         if request.url.path == "/":
-            # Redireciona para /docs
             return RedirectResponse(url="/docs")
         return await call_next(request)
 
@@ -25,9 +23,8 @@ class App(FastAPI):
             root_path=settings.ROOT_PATH,
         )
 
-        # Adiciona o middleware ao aplicativo
         self.add_middleware(RedirectToDocsMiddleware)
+        self.include_router(api_router)
 
 
 app = App()
-app.include_router(api_router)

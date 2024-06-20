@@ -34,16 +34,8 @@ class GenericException(BaseException):
 
 
 class NotFoundException(BaseException):
-    message = "Not Found"
+    message = "Not Found Exception"
 
 
-class ValidationException(BaseException):
-    message = "Validation Error"
-
-
-class DataBaseException(BaseException):
-    message = "Database error"
-
-
-class OverflowException(BaseException):
-    message = "Overflow"
+class DataBaseException(GenericException):
+    message = "Database Exception"

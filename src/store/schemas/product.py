@@ -1,41 +1,61 @@
+from datetime import datetime
 from decimal import Decimal
 from typing import Annotated, Optional
+from uuid import uuid4
 from bson import Decimal128
-from pydantic import AfterValidator, BaseModel, Field
-from store.schemas.base import BaseSchemaMixin, OutMixin
+from pydantic import UUID4, Field
+from store.schemas.base import BaseSchemaMixin, InMixin, OutMixin
+from store.core.config import settings
 
 
-def convert_decimal_128(v):
-    return Decimal128(str(v))
+class ProductBase(BaseSchemaMixin):
+
+    name: Annotated[str, Field(description="Product Name", example="Intel Core i5 2410M")]
+    price: Annotated[Decimal, Field(description="Product Price", example=225.5)]
+    quantity: Annotated[int, Field(description="Product Quantity", example=500)]
+
+    status: Annotated[bool, Field(description="Product Status", example=False)]
 
 
-Decimal_ = Annotated[Decimal, AfterValidator(convert_decimal_128)]
+class ProductIn(BaseSchemaMixin, InMixin):
+
+    id: Annotated[Optional[UUID4], Field(dexample=uuid4())]
+    status: Annotated[Optional[bool], Field(example=False)]
+    
+    name: Annotated[Optional[str], Field(example="Intel Core i5 2410M")]
+    price: Annotated[Optional[Decimal128], Field(example=225.5)]
+    quantity: Annotated[Optional[int], Field(example=500)]
+
+    updated_at: Annotated[Optional[datetime], Field(example=datetime.now(settings.UTC_TIMEZONE))]
+    created_at: Annotated[Optional[datetime], Field(example=datetime.now(settings.UTC_TIMEZONE))]    
+    
+
+class ProductOut(BaseSchemaMixin, OutMixin):
+
+    id: Annotated[Optional[UUID4], Field(example=uuid4())]
+    status: Annotated[Optional[bool], Field(example=False)]
+
+    name: Annotated[Optional[str], Field(example="Intel Core i5 2410M")]
+    price: Annotated[Optional[Decimal], Field(example=225.5)]
+    quantity: Annotated[Optional[int], Field(example=500)]
+   
+    updated_at: Annotated[Optional[datetime], Field(example=datetime.now(settings.LOCAL_TIMEZONE))]
+    created_at: Annotated[Optional[datetime], Field(example=datetime.now(settings.LOCAL_TIMEZONE))]
+
+    
+class ProductCreateIn(BaseSchemaMixin):
+
+    name: Annotated[str, Field(description="Product Name", example="Intel Core i5 2410M")]
+    price: Annotated[Decimal, Field(description="Product Price", example=225.5)]
+    quantity: Annotated[int, Field(description="Product Quantity", example=500)]
+
+    status: Annotated[bool, Field(description="Product Status", example=False)]
 
 
-class ProductBase(BaseModel):
-    name: str = Field(..., description="Product name")
-    quantity: int = Field(..., description="Product quantity")
-    price: Decimal = Field(..., description="Product price")
-    status: bool = Field(..., description="Product status")
+class ProductUpdateIn(BaseSchemaMixin):
+    
+    name: Annotated[Optional[str], Field(description="Product Name", example="Intel Core i5 2410M")]
+    price: Annotated[Optional[Decimal], Field(description="Product Price", example=225.5)]
+    quantity: Annotated[Optional[int], Field(description="Product Quantity", example=500)]
 
-
-class ProductIn(ProductBase, BaseSchemaMixin):
-    pass
-
-
-class ProductOut(ProductBase, BaseSchemaMixin, OutMixin):
-    pass
-
-
-class ProductUpdateIn(ProductBase):
-    name: Optional[str] = Field(None, description="Product name")
-    quantity: Optional[int] = Field(None, description="Product quantity")
-    price: Optional[Decimal_] = Field(None, description="Product price")
-    status: Optional[bool] = Field(None, description="Product status")
-
-
-class ProductUpdateOut(ProductBase, BaseSchemaMixin, OutMixin):
-    name: Optional[str] = Field(None, description="Product name")
-    quantity: Optional[int] = Field(None, description="Product quantity")
-    price: Optional[Decimal] = Field(None, description="Product price")
-    status: Optional[bool] = Field(None, description="Product status")
+    status: Annotated[Optional[bool], Field(description="Product Status", example=False)]

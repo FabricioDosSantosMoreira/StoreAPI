@@ -1,9 +1,6 @@
 run:
 	@uvicorn store.main:app --reload --port 8080
 
-precommit-install:
-	@poetry run pre-commit install
-
 test:
 	@poetry run pytest
 
