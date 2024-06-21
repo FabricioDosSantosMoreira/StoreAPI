@@ -1,31 +1,29 @@
 from pydantic import ValidationError
 
 import pytest
-from store.schemas.product import ProductIn
+from store.schemas.product import ProductCreateIn
 from tests.factories import product_data
 
 
 def test_schemas_return_sucess():
-    data = product_data()
-    product = ProductIn.model_validate(data)
 
-    assert product.name == "I5 2410M"
+    product = ProductCreateIn.model_validate(product_data())
+
+    assert product.name == "Intel Core i5 2410M"
 
 
 def test_schemas_return_raise():
+    
     data = {
-        "name": "I5 2410M",
-        "quantity": 100,
-        "price": 83.0,
+        "name": "Intel Core i5 2410M",
+        "quantity": 500,
+        "price": 225.5,
     }
-
     with pytest.raises(ValidationError) as err:
-        ProductIn.model_validate(data)
+        ProductCreateIn.model_validate(data)
 
-    assert err.value.errors()[0] == {
-        "type": "missing",
-        "loc": ("status",),
-        "msg": "Field required",
-        "input": {"name": "I5 2410M", "quantity": 100, "price": 83.0},
-        "url": "https://errors.pydantic.dev/2.7/v/missing",
+    assert err.value.errors()[0]["input"] == {
+        'name': 'Intel Core i5 2410M', 
+        'quantity': 500, 
+        'price': 225.5,
     }

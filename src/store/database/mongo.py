@@ -18,7 +18,7 @@ class MongoDBClientWrapper():
         self.product_collection: AsyncIOMotorCollection = self.get_collection(
             name=settings.DATABASE_PRODUCT_COLLECTION
         )
-
+        
 
     def get_client(self, url: str) -> AsyncIOMotorClient:
         try: 

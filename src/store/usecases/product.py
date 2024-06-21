@@ -1,11 +1,13 @@
+from datetime import datetime
 from typing import List
 from uuid import UUID
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase, AsyncIOMotorCollection
 import pymongo
+import pytz
 from store.core.exception import GenericException, NotFoundException
 from store.database.mongo import db_client
 from store.models.product import ProductCreateModel, ProductUpdateModel
-from store.schemas.product import ProductIn, ProductOut, ProductCreateIn, ProductUpdateIn
+from store.schemas.product import ProductIn, ProductOut, ProductCreateIn, ProductUpdateIn, ProductUpdateInDatabase
 
 
 class ProductUsecase():
@@ -85,8 +87,9 @@ class ProductUsecase():
 
     async def update(self, id: UUID, body: ProductUpdateIn) -> ProductOut:
 
-        product = ProductUpdateModel(**body.model_dump())
-
+        # Create a 'ProductUpdateInDatabase' instance using data from 'ProductUpdateIn'
+        product = ProductUpdateInDatabase(**body.model_dump())
+  
         try:
             # Find a document with the given 'id' and update it with the new data from 'body'
             result = await self.collection.find_one_and_update(
@@ -99,7 +102,7 @@ class ProductUsecase():
             raise GenericException(
                 message="Exception occurred while updating a product",
                 from_exception=type(exc),
-                kwargs={"class": self.__class__.__name__}
+                kwargs={"exception": exc, "class": self.__class__.__name__}
             )
    
         # If no document was found and updated, raise a 'NotFoundException'
@@ -107,7 +110,7 @@ class ProductUsecase():
             raise NotFoundException(
                 message=f"Product not found with id: UUID('{id}')"
             )
-        
+
         # Return a 'ProductOut' instance initialized with the updated document's data
         return ProductOut(**result)
 

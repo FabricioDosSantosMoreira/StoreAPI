@@ -1,9 +1,11 @@
 from decimal import Decimal
-from typing import Annotated, Any, Dict
+from typing import Annotated, Any, Dict, Optional
 from bson import Decimal128
 from pydantic import BaseModel, model_serializer, UUID4, Field
 from datetime import datetime
 from uuid import uuid4
+
+from pydantic_settings import SettingsConfigDict
 from store.core.config import settings
 
 
@@ -55,4 +57,6 @@ class UpdateBaseModel(BaseModel):
                 self_dict[key] = Decimal128(str(value))
 
         return self_dict
+
+    
 

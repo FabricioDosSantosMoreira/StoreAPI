@@ -2,15 +2,12 @@ import asyncio
 from typing import List
 from uuid import UUID
 import pytest
-
-
 from store.usecases.product import product_usecase
 from store.database.mongo import db_client
-from store.schemas.product import ProductIn, ProductOut, ProductUpdateIn
+from store.schemas.product import ProductOut, ProductUpdateIn, ProductCreateIn
 from tests.factories import product_data, products_data
 from store.main import app
-
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 
 
 @pytest.fixture(scope="session")
@@ -23,13 +20,13 @@ def event_loop():
 
 @pytest.fixture
 def mongo_client():
-    return db_client.get_client()
+    return db_client
 
 
 @pytest.fixture(autouse=True)
 async def clear_collections(mongo_client):
     yield
-    collection_names = await mongo_client.get_database().list_collection_names()
+    collection_names = await mongo_client.database.list_collection_names()
     for collection_name in collection_names:
         if collection_name.startswith("system"):
             continue
@@ -39,7 +36,7 @@ async def clear_collections(mongo_client):
 
 @pytest.fixture
 async def client():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
 
 
@@ -54,8 +51,15 @@ def product_id() -> UUID:
 
 
 @pytest.fixture
-def product_in(product_id) -> ProductIn:
-    return ProductIn(**product_data(), id=product_id)
+def product_in() -> ProductCreateIn:
+
+    product = ProductCreateIn(**product_data())
+    return product
+
+
+@pytest.fixture
+def products_in() -> List[ProductCreateIn]:
+    return [ProductCreateIn(**product) for product in products_data()]
 
 
 @pytest.fixture
@@ -66,11 +70,6 @@ def product_up(product_id) -> ProductUpdateIn:
 @pytest.fixture
 async def product_inserted(product_in) -> ProductOut:
     return await product_usecase.create(body=product_in)
-
-
-@pytest.fixture
-def products_in(product_id) -> List[ProductIn]:
-    return [ProductIn(**product) for product in products_data()]
 
 
 @pytest.fixture
